@@ -12,6 +12,7 @@ return {
 
     -- Additional lua configuration, makes nvim stuff amazing!
     'folke/neodev.nvim',
+
   },
 
   config = function()
@@ -99,12 +100,18 @@ return {
       },
     }
 
+    require("lspconfig").dartls.setup({
+      capabilities = require("cmp_nvim_lsp").default_capabilities(),
+      on_attach = on_attach,
+      cmd = { "dart", "language-server", "--protocol=lsp" },
+    })
+
     -- Setup neovim lua configuration
     require('neodev').setup()
 
     -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
     local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+    capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities(capabilities))
 
     -- Ensure the servers above are installed
     local mason_lspconfig = require 'mason-lspconfig'
@@ -123,5 +130,5 @@ return {
         }
       end,
     }
-  end
+  end,
 }
